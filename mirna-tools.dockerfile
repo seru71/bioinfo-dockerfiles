@@ -26,6 +26,7 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list.backup && \
 			rsync \
 			wget \
 			unzip \
+			parallel \
 			build-essential && \
 	mkdir ${tools_dir}
 
@@ -34,7 +35,13 @@ RUN cd ${tools_dir} && \
 	wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.7.zip && \
 	unzip fastqc_v0.11.7.zip && \
 	chmod u+x FastQC/fastqc && \
-	ln -s ${tools}/FastQC/fastqc ${bin}
+	ln -s ${tools_dir}/FastQC/fastqc ${bin_dir}
+
+# MultiQC
+RUN apt -y install python-setuptools \
+			python-dev && \
+	easy_install pip && \
+	pip install multiqc
 
 
 # install trimmomatic
