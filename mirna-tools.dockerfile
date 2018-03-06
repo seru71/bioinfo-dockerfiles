@@ -86,6 +86,8 @@ RUN cd ${tools_dir} && \
 	wget https://github.com/rajewsky-lab/mirdeep2/archive/562963670200e6e63ff7d55c8e99acf4d6184c5b.zip && \
 	unzip 562963670200e6e63ff7d55c8e99acf4d6184c5b.zip && \
 	cd mirdeep2-562963670200e6e63ff7d55c8e99acf4d6184c5b && \
-	perl install.py && source ~/.bash_profile && perl install.py
+	perl install.pl && \
+	/bin/bash -c 'source ~/.bash_profile' && \
+	perl install.pl
 
 
