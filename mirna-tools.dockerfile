@@ -27,6 +27,7 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list.backup && \
 			wget \
 			unzip \
 			parallel \
+			vim \
 			build-essential && \
 	mkdir ${tools_dir}
 
@@ -96,5 +97,17 @@ RUN cd ${tools_dir} && \
 	perl install.pl && \
 	/bin/bash -c 'source ~/.bash_profile' && \
 	perl install.pl
+
+# install samtools
+#
+# TODO: use version 1.4 from github!!
+#
+RUN apt -y install liblzma-dev &&
+	cd ${tools_dir} && \
+	wget https://github.com/samtools/samtools/releases/download/1.7/samtools-1.7.tar.bz2 && \
+	tar -xjf samtools-1.7.tar.bz2 && \
+	cd samtools-1.7 && \
+	make && \
+	ln -s ${tools_dir}/samtools-1.7/bin/samtools ${bin_dir}
 
 
