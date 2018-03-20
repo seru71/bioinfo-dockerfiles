@@ -53,6 +53,23 @@ RUN apt -y install openjdk-7-jre && \
 	echo 'java -jar ${tools_dir}/Trimmomatic-0.36/trimmomatic-0.36.jar $*' > ${bin_dir}/trimmomatic && \
 	chmod u+x ${bin_dir}/trimmomatic
 
+# install trimming script
+RUN apt -y install libtre-dev && \
+	pip install tre && \
+	wget -O ${bin_dir}/trim_UMI.py https://pastebin.com/raw/UuYuzwQD && \
+	chmod u+x ${bin_dir}/trim_UMI.py
+
+# install samtools
+RUN apt -y install liblzma-dev \
+		libncurses-dev \
+		libbz2-dev && \
+	cd ${tools_dir} && \
+	wget https://github.com/samtools/samtools/releases/download/1.7/samtools-1.7.tar.bz2 && \
+	tar -xjf samtools-1.7.tar.bz2 && \
+	cd samtools-1.7 && \
+	make && \
+	ln -s ${tools_dir}/samtools-1.7/samtools ${bin_dir}
+
 # install bwa
 RUN apt -y install zlib1g-dev && \
 	cd ${tools_dir} && \
@@ -98,16 +115,7 @@ RUN cd ${tools_dir} && \
 	/bin/bash -c 'source ~/.bash_profile' && \
 	perl install.pl
 
-# install samtools
-#
-# TODO: use version 1.4 from github!!
-#
-RUN apt -y install liblzma-dev &&
-	cd ${tools_dir} && \
-	wget https://github.com/samtools/samtools/releases/download/1.7/samtools-1.7.tar.bz2 && \
-	tar -xjf samtools-1.7.tar.bz2 && \
-	cd samtools-1.7 && \
-	make && \
-	ln -s ${tools_dir}/samtools-1.7/bin/samtools ${bin_dir}
 
-
+# UMI-tools
+RUN pip install -U setuptools && \\
+    pip install umi_tools
