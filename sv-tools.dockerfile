@@ -4,7 +4,7 @@
 #
 # Usage example:
 # docker build -t pawels/svtools svtools.dockerfile
-# docker run -v /:/gen:ro -v /home/pawels/projects/RCAD_WGS/results/:/results -ti pawels/svtools
+# docker run -v /home/ngs:/gen:ro -v /home/ngs/projects/RCAD_WGS/SV_docker:/work:rw -ti pawels/svtools
 #
 
 FROM ubuntu:xenial
@@ -60,7 +60,8 @@ RUN cd ${tools_dir} && \
 RUN apt -y install python-setuptools \
 			python-dev \
 			python-numpy \
-			cython && \
+			cython \
+			bedtools && \
 	easy_install pip && \
 	pip install sv2
 
@@ -78,14 +79,15 @@ RUN cd ${tools_dir} && \
 #
 
 # install CNVnator
-RUN apt -y install root-system && \
-	echo "export ROOTSYS=/usr" >> ~/.bashrc && source ~/.bashrc && \
+RUN export DEBIAN_FRONTEND=noninteractive && \
+	apt -y install root-system && \
+	echo "export ROOTSYS=/usr" >> ~/.bashrc && export ROOTSYS=/usr && \
 	cd ${tools_dir} && \
 	wget https://github.com/abyzovlab/CNVnator/releases/download/v0.3.3/CNVnator_v0.3.3.zip && \
 	unzip CNVnator_v0.3.3.zip && \
 	cd CNVnator_v0.3.3/src/samtools && make && \
 	cd .. && make && \
-	ln -s ${tools_dir}/CNVnator/src/cnvnator ${bin_dir}
+	ln -s ${tools_dir}/CNVnator_v0.3.3/src/cnvnator ${bin_dir}
 	
 
 
