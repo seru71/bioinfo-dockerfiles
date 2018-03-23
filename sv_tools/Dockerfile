@@ -29,6 +29,7 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list.backup && \
 			unzip \
 			parallel \
 			vim \
+			gawk \
 			build-essential \
 			cmake \
 			zlib1g-dev \
@@ -92,7 +93,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 
 
 # install speedseq
-RUN cd ${tools_dir} && \
+RUN apt -y install python-scipy && \
+	cd ${tools_dir} && \
 	git clone --recursive https://github.com/cc2qe/speedseq.git && \
 	cd speedseq && make && \
 	ln -s ${tools_dir}/speedseq/bin/speedseq ${bin_dir}

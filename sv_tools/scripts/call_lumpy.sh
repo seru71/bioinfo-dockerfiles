@@ -11,20 +11,21 @@ source common_env
 
 speedseq=speedseq
 exclude_bed=/tools/speedseq/annotations/ceph18.b37.lumpy.exclude.2014-01-15.bed
+n_threads=20
 
 timestamp=`date --iso-8601=minutes`
-if [ ! -d ${results_dir}/speedseq_${timestamp} ]; then
-         mkdir ${results_dir}/speedseq_${timestamp}
+if [ ! -d ${results_dir}/lumpy_${timestamp} ]; then
+         mkdir ${results_dir}/lumpy_${timestamp}
 fi
 
 # parse args and prepare input to speedseq
-BAMS_ARG=`echo $bams | sed 's//,/'`
+BAMS_ARG=`echo $bams | sed 's/ /,/g'`
 SPLITTERS_ARG=`echo $BAMS_ARG | sed 's/.bam/.splitters.bam/g'`
 DISCORDANTS_ARG=`echo $BAMS_ARG | sed 's/.bam/.discordants.bam/g'`
 
 
-output_prefix=${out_dir}/speedseq_${timestamp}/all_samples.sv.vcf.gz
-${speedseq} sv -o ${output_prefix}/all_samples -R ${reference} -x ${exclude_bed} -g -t 30 \
-	-B ${BAMS_ARG} -S ${SPLITTERS_ARG} -D ${DISCORDANTS_ARG}  &> ${output_prefix}/all_samples.sv.err
+output_prefix=${results_dir}/lumpy_${timestamp}/all_samples
+${speedseq} sv -o ${output_prefix} -R ${reference} -x ${exclude_bed} -g -t $n_threads \
+	-B ${BAMS_ARG} -S ${SPLITTERS_ARG} -D ${DISCORDANTS_ARG} &> ${output_prefix}.sv.err
 
 
