@@ -1,0 +1,2 @@
+export reference=/gen/reference/b37/gatk_bundle_2.8/human_g1k_v37_decoy.fasta
+export results_dir=/work/results
