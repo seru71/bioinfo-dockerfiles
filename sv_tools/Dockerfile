@@ -101,7 +101,16 @@ RUN apt -y install python-scipy && \
 
 
 
-
+# install MetaSV and its dependencies
+RUN cd ${tools_dir} && \
+	wget http://cab.spbu.ru/files/release3.11.1/SPAdes-3.11.1-Linux.tar.gz && \
+	tar -xzf SPAdes-3.11.1-Linux.tar.gz && \
+	ln -s ${tools_dir}/SPAdes-3.11.1-Linux/bin/spades.py ${bin_dir} && \
+	wget https://github.com/abyzovlab/AGE/archive/master.zip && \
+	unzip master.zip && cd AGE-master && make OMP=no && \
+	ln -s ${tools_dir}/AGE-master/age_align ${bin_dir} && \
+	pip install https://github.com/bioinform/metasv/archive/0.5.2.tar.gz
+	
 
 
 
