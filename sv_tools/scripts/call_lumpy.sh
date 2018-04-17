@@ -1,7 +1,9 @@
 #!/bin/bash
 #
-# Runs multisample speedseq sv. Assumes mapping has been done with followin speedseq's pipeline
-# and split- and discordant reads are in $SAMPLE.[splitter|discordants].bam
+# Runs multisample speedseq sv. Assumes that:
+# 1. mapping has been done following speedseq's pipeline
+# 2. split- and discordant read bams are in the same location as tha main bam file 
+# 3. names of the above bams are $SAMPLE.[splitters|discordants].bam
 #
 
 bams="$*"
@@ -13,7 +15,7 @@ speedseq=speedseq
 exclude_bed=/tools/speedseq/annotations/ceph18.b37.lumpy.exclude.2014-01-15.bed
 n_threads=20
 
-timestamp=`date --iso-8601=minutes`
+timestamp=`get_timestamp`
 if [ ! -d ${results_dir}/lumpy_${timestamp} ]; then
          mkdir ${results_dir}/lumpy_${timestamp}
 fi

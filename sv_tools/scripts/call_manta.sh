@@ -7,7 +7,7 @@ manta=/tools/manta-1.3.2/bin/configManta.py
 n_jobs=10
 mem_limit=128
 
-timestamp=`date --iso-8601=minutes`
+timestamp=`get_timestamp`
 cmd="$manta --runDir=${results_dir}/manta_${timestamp} --referenceFasta=${reference}"
 for bam in $bams; do
   cmd="$cmd --bam $bam"
