@@ -28,7 +28,10 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list.backup && \
 			unzip \
 			parallel \
 			vim \
-			build-essential && \
+			build-essential \
+			python-setuptools \
+			python-dev && \
+	easy_install pip && \
 	mkdir ${tools_dir}
 
 # FastQC
@@ -39,10 +42,7 @@ RUN cd ${tools_dir} && \
 	ln -s ${tools_dir}/FastQC/fastqc ${bin_dir}
 
 # MultiQC
-RUN apt -y install python-setuptools \
-			python-dev && \
-	easy_install pip && \
-	pip install multiqc
+RUN pip install multiqc
 
 
 # install trimmomatic
@@ -62,7 +62,8 @@ RUN apt -y install libtre-dev && \
 # install samtools
 RUN apt -y install liblzma-dev \
 		libncurses-dev \
-		libbz2-dev && \
+		libbz2-dev \
+		zlib1g-dev && \
 	cd ${tools_dir} && \
 	wget https://github.com/samtools/samtools/releases/download/1.7/samtools-1.7.tar.bz2 && \
 	tar -xjf samtools-1.7.tar.bz2 && \
@@ -71,8 +72,7 @@ RUN apt -y install liblzma-dev \
 	ln -s ${tools_dir}/samtools-1.7/samtools ${bin_dir}
 
 # install bwa
-RUN apt -y install zlib1g-dev && \
-	cd ${tools_dir} && \
+RUN cd ${tools_dir} && \
 	wget https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.17.tar.bz2 && \
 	tar -xjf bwa-0.7.17.tar.bz2 && \
 	cd bwa-0.7.17 && \
@@ -117,5 +117,24 @@ RUN cd ${tools_dir} && \
 
 
 # UMI-tools
-RUN pip install -U setuptools && \\
+RUN pip install -U setuptools && \
     pip install umi_tools
+
+# Subread (featureCount)
+RUN cd ${tools_dir} && \
+	wget https://sourceforge.net/projects/subread/files/subread-1.6.1/subread-1.6.1-source.tar.gz && \
+	tar -xzf subread-1.6.1-source.tar.gz && \
+	cd subread-1.6.1-source/src && \
+	make -f Makefile.Linux && \
+	ln -s ${tools_dir}/subread-1.6.1-source/bin/featureCounts ${bin_dir}
+
+# Pipeline
+RUN pip install ruffus 
+#drmaa ??
+
+
+
+
+
+
+
