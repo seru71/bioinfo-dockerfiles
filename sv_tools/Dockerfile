@@ -29,6 +29,7 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list.backup && \
 			unzip \
 			parallel \
 			vim \
+			gawk \
 			build-essential \
 			cmake \
 			zlib1g-dev \
@@ -92,14 +93,24 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 
 
 # install speedseq
-RUN cd ${tools_dir} && \
+RUN apt -y install python-scipy && \
+	cd ${tools_dir} && \
 	git clone --recursive https://github.com/cc2qe/speedseq.git && \
 	cd speedseq && make && \
 	ln -s ${tools_dir}/speedseq/bin/speedseq ${bin_dir}
 
 
 
-
+# install MetaSV and its dependencies
+RUN cd ${tools_dir} && \
+	wget http://cab.spbu.ru/files/release3.11.1/SPAdes-3.11.1-Linux.tar.gz && \
+	tar -xzf SPAdes-3.11.1-Linux.tar.gz && \
+	ln -s ${tools_dir}/SPAdes-3.11.1-Linux/bin/spades.py ${bin_dir} && \
+	wget https://github.com/abyzovlab/AGE/archive/master.zip && \
+	unzip master.zip && cd AGE-master && make OMP=no && \
+	ln -s ${tools_dir}/AGE-master/age_align ${bin_dir} && \
+	pip install https://github.com/bioinform/metasv/archive/0.5.2.tar.gz
+	
 
 
 
