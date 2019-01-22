@@ -49,10 +49,16 @@ $cnvnator -root $rootf \
 	-call $BIN_SIZE > ${calls_file} 2>>${err_file}
 
 echo 'Step6:' >> ${err_file}
+
+for reg in `cut -f2 ${calls_file}`; do 
+	samtools view $bam $reg | awk '{sum+=$5}END{print sum/NR}'
+done > ${calls_file}.mqs
+
 sed 's/:/\t/g' ${calls_file} \
 	| sed -E 's/([0-9])-([1-9])/\1\t\2/g' \
 	| sed 's/deletion/DEL/g' | sed 's/duplication/DUP/g' \
-	| awk '{OFS="\t"; print $2,$3,$4,$1,$5,$6,$7,$8,$9,$10,$11}' > ${bed_file}
+	| awk '{OFS="\t"; print $2,$3,$4,$1,$5,$6,$7,$8,$9,$10,$11}' \
+	| paste - ${calls_file}.mqs > ${bed_file}
 
 echo 'Cleaning up...' >> ${err_file}
 if [ -s "${calls_file}" ]; then
