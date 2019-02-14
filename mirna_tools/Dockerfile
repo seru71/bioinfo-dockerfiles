@@ -98,6 +98,12 @@ RUN cd ${tools_dir} && \
 	make && \
 	ln -s ${tools_dir}/hisat2-2.1.0/hisat2 ${bin_dir}
 
+RUN cd ${tools_dir} && \
+        wget https://github.com/broadinstitute/picard/releases/download/1.141/picard-tools-1.141.zip && \
+        unzip picard-tools-1.141.zip && \
+        echo 'java -jar /tools/picard-tools-1.141/picard.jar $@' > /usr/local/bin/picard && \
+        chmod u+x /usr/local/bin/picard
+
 # install tDRmapper
 RUN apt -y install r-base && \
 	cd ${tools_dir} && \
