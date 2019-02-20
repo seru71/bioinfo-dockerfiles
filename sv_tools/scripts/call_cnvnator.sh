@@ -51,7 +51,7 @@ $cnvnator -root $rootf \
 echo 'Step6:' >> ${err_file}
 
 for reg in `cut -f2 ${calls_file}`; do 
-	samtools view $bam $reg | awk '{sum+=$5}END{print sum/NR}'
+	samtools view $bam $reg | awk '{sum+=$5}END{if (NR==0) {print "NA"} else {print sum/NR}}'
 done > ${calls_file}.mqs
 
 sed 's/:/\t/g' ${calls_file} \
