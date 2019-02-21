@@ -3,11 +3,11 @@
 # Paweł Sztromwasser, 03/2018
 #
 # Usage example:
-# docker build -t pawels/svtools svtools.dockerfile
+# docker build -t pawels/svtools -f svtools.dockerfile
 # docker run -v /home/ngs:/gen:ro -v /home/ngs/projects/RCAD_WGS/SV_docker:/work:rw -ti pawels/svtools
 #
 
-FROM ubuntu:xenial
+FROM pawels/ngstools
 
 ENV tools_dir /tools
 ENV bin_dir /usr/local/bin
@@ -16,54 +16,14 @@ ENV bin_dir /usr/local/bin
 # use later to create mirna user owning stuff, instead of root
 #ENV username mirna
 
-RUN cp /etc/apt/sources.list /etc/apt/sources.list.backup && \
-	echo deb mirror://mirrors.ubuntu.com/mirrors.txt xenial main restricted universe multiverse > /etc/apt/sources.list && \
-	echo deb mirror://mirrors.ubuntu.com/mirrors.txt xenial-updates main restricted universe multiverse >> /etc/apt/sources.list && \
-	echo deb mirror://mirrors.ubuntu.com/mirrors.txt xenial-backports main restricted universe multiverse >> /etc/apt/sources.list && \
-	echo deb mirror://mirrors.ubuntu.com/mirrors.txt xenial-security main restricted universe multiverse >> /etc/apt/sources.list && \
-	apt update && \
-	apt -y install curl \
-			git \
-			rsync \
-			wget \
-			unzip \
-			parallel \
-			vim \
-			gawk \
-			build-essential \
-			cmake \
-			zlib1g-dev \
-			liblzma-dev \
-			libncurses-dev \
-			libbz2-dev && \
-	mkdir ${tools_dir}
-
-
-# install samtools
-RUN cd ${tools_dir} && \
-	wget https://github.com/samtools/samtools/releases/download/1.7/samtools-1.7.tar.bz2 && \
-	tar -xjf samtools-1.7.tar.bz2 && \
-	cd samtools-1.7 && \
-	make && \
-	ln -s ${tools_dir}/samtools-1.7/samtools ${bin_dir}
-
-
-# install bwa
-RUN cd ${tools_dir} && \
-	wget https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.17.tar.bz2 && \
-	tar -xjf bwa-0.7.17.tar.bz2 && \
-	cd bwa-0.7.17 && \
-	make && \
-	ln -s ${tools_dir}/bwa-0.7.17/bwa ${bin_dir}
-
+RUN	apt update && \
+	apt -y install gawk \
+			       cmake
 
 # install SV2
-RUN apt -y install python-setuptools \
-			python-dev \
-			python-numpy \
-			cython \
-			bedtools && \
-	easy_install pip && \
+RUN apt -y install python-numpy \
+			       cython \
+			       bedtools && \
 	pip install sv2
 
 
@@ -80,25 +40,24 @@ RUN cd ${tools_dir} && \
 #
 
 # install CNVnator
-RUN export DEBIAN_FRONTEND=noninteractive && \
-	apt -y install root-system && \
-	echo "export ROOTSYS=/usr" >> ~/.bashrc && export ROOTSYS=/usr && \
-	cd ${tools_dir} && \
+RUN cd ${tools_dir} && \
+	wget https://root.cern/download/root_v6.16.00.Linux-ubuntu18-x86_64-gcc7.3.tar.gz && \
+    tar -xzf root_v6.16.00.Linux-ubuntu18-x86_64-gcc7.3.tar.gz && mv root root_v6.16.00 && \
+    echo "export ROOTSYS=/tools/root_v6.16.00" >> ~/.bashrc && \
+    echo "source /tools/root_v6.16.00/bin/thisroot.sh" >> ~/.bashrc && \
 	wget https://github.com/abyzovlab/CNVnator/releases/download/v0.3.3/CNVnator_v0.3.3.zip && \
 	unzip CNVnator_v0.3.3.zip && \
-	cd CNVnator_v0.3.3/src/samtools && make && \
-	cd .. && make && \
+	cd CNVnator_v0.3.3/src/samtools && make && cd .. && \
+	/bin/bash -c "export ROOTSYS=/tools/root_v6.16.00 && source /tools/root_v6.16.00/bin/thisroot.sh && make" && \
 	ln -s ${tools_dir}/CNVnator_v0.3.3/src/cnvnator ${bin_dir}
 	
-
 
 # install speedseq
 RUN apt -y install python-scipy && \
 	cd ${tools_dir} && \
 	git clone --recursive https://github.com/cc2qe/speedseq.git && \
-	cd speedseq && make && \
+	cd speedseq && export CXXFLAGS="-std=c++98" && make && \
 	ln -s ${tools_dir}/speedseq/bin/speedseq ${bin_dir}
-
 
 
 # install MetaSV and its dependencies
