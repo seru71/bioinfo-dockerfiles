@@ -34,22 +34,20 @@ RUN cd ${tools_dir} && \
 	mkdir manta-build && cd manta-build && \
  	../manta-1.3.2.release_src/configure --jobs=8 --prefix=${tools_dir}/manta-1.3.2 && \
 	make -j8 install && \
-	ln -s ${tools_dir}/manta-1.3.2/bin/configManta.py ${bin_dir}/manta
-#
-# the ${bin_dir}/manta link does not work
-#
+	echo "cd /tools/manta-1.3.2 && ./configManta.py" > ${bin_dir}/manta
+
 
 # install CNVnator
-RUN cd ${tools_dir} && \
+RUN apt -y install libcurl4-openssl-dev && \
+    cd ${tools_dir} && \
 	wget https://root.cern/download/root_v6.16.00.Linux-ubuntu18-x86_64-gcc7.3.tar.gz && \
     tar -xzf root_v6.16.00.Linux-ubuntu18-x86_64-gcc7.3.tar.gz && mv root root_v6.16.00 && \
     echo "export ROOTSYS=/tools/root_v6.16.00" >> ~/.bashrc && \
     echo "source /tools/root_v6.16.00/bin/thisroot.sh" >> ~/.bashrc && \
-	wget https://github.com/abyzovlab/CNVnator/releases/download/v0.3.3/CNVnator_v0.3.3.zip && \
-	unzip CNVnator_v0.3.3.zip && \
-	cd CNVnator_v0.3.3/src/samtools && make && cd .. && \
-	/bin/bash -c "export ROOTSYS=/tools/root_v6.16.00 && source /tools/root_v6.16.00/bin/thisroot.sh && make" && \
-	ln -s ${tools_dir}/CNVnator_v0.3.3/src/cnvnator ${bin_dir}
+	wget https://github.com/abyzovlab/CNVnator/releases/download/v0.4/CNVnator_v0.4.zip && \
+	unzip CNVnator_v0.4.zip && cd CNVnator_v0.4/src/ && \
+    ln -s ../../samtools-1.9 samtools && make && \
+	ln -s ${tools_dir}/CNVnator_v0.4/src/cnvnator ${bin_dir}
 	
 
 # install speedseq
@@ -57,7 +55,8 @@ RUN apt -y install python-scipy && \
 	cd ${tools_dir} && \
 	git clone --recursive https://github.com/cc2qe/speedseq.git && \
 	cd speedseq && export CXXFLAGS="-std=c++98" && make && \
-	ln -s ${tools_dir}/speedseq/bin/speedseq ${bin_dir}
+	ln -s ${tools_dir}/speedseq/bin/speedseq ${bin_dir} && \
+    cp ${tools_dir}/speedseq/bin/speedseq.config ${bin_dir}
 
 
 # install MetaSV and its dependencies
@@ -70,13 +69,6 @@ RUN cd ${tools_dir} && \
 	ln -s ${tools_dir}/AGE-master/age_align ${bin_dir} && \
 	pip install https://github.com/bioinform/metasv/archive/0.5.2.tar.gz
 	
-
-
-
-
-
-
-
 
 
 
