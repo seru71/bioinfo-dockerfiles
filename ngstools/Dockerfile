@@ -30,11 +30,13 @@ RUN apt update && \
 			parallel \
             git \
 			vim \
-			build-essential \
+			build-essential
+            cmake \
             zlib1g-dev \
             python-pip \
             virtualenv \
-            openjdk-8-jre && \
+            openjdk-8-jre \
+            tabix && \
 	mkdir ${tools_dir}
 
 # FastQC
@@ -113,8 +115,7 @@ RUN cd ${tools_dir} && \
     ln -s ${tools_dir}/STAR-2.7.0f/bin/Linux_x86_64/STAR ${bin_dir}
 
 # bamtools
-RUN apt -y install cmake && \
-    cd ${tools_dir} && \
+RUN cd ${tools_dir} && \
     wget https://github.com/pezmaster31/bamtools/archive/v2.5.1.tar.gz && \
     tar -xzf v2.5.1.tar.gz && \
     mkdir bamtools-2.5.1/build && cd bamtools-2.5.1/build && \
@@ -127,9 +128,6 @@ RUN apt -y install cmake && \
 RUN pip install biopython \
                 pyfaidx \
                 ruffus
-
-
-RUN apt -y install tabix
 
 # Pipeline
 #drmaa ??
