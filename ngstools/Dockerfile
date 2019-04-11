@@ -33,6 +33,7 @@ RUN apt update && \
 			build-essential \
             zlib1g-dev \
             python-pip \
+            virtualenv \
             openjdk-8-jre && \
 	mkdir ${tools_dir}
 
@@ -66,11 +67,11 @@ RUN apt -y install liblzma-dev \
 		libncurses-dev \
 		libbz2-dev && \
 	cd ${tools_dir} && \
-	wget https://github.com/samtools/samtools/releases/download/1.7/samtools-1.7.tar.bz2 && \
-	tar -xjf samtools-1.7.tar.bz2 && \
-	cd samtools-1.7 && \
+	wget https://github.com/samtools/samtools/releases/download/1.9/samtools-1.9.tar.bz2 && \
+	tar -xjf samtools-1.9.tar.bz2 && \
+	cd samtools-1.9 && \
 	make && \
-	ln -s ${tools_dir}/samtools-1.7/samtools ${bin_dir}
+	ln -s ${tools_dir}/samtools-1.9/samtools ${bin_dir}
 
 # install bowtie2
 RUN apt -y install mutrace \
@@ -105,8 +106,27 @@ RUN cd ${tools_dir} && \
 	make -f Makefile.Linux && \
 	ln -s ${tools_dir}/subread-1.6.1-source/bin/featureCounts ${bin_dir}
 
+# STAR
+RUN cd ${tools_dir} && \
+    wget https://github.com/alexdobin/STAR/archive/2.7.0f.tar.gz && \
+    tar -xzf 2.7.0f.tar.gz && \
+    ln -s ${tools_dir}/STAR-2.7.0f/bin/Linux_x86_64/STAR ${bin_dir}
+
+# bamtools
+RUN cd ${tools_dir} && \
+    wget https://github.com/pezmaster31/bamtools/archive/v2.5.1.tar.gz && \
+    mkdir bamtools-2.5.1/build && cd bamtools-2.5.1/build && \
+    cmake -DCMAKE_INSTALL_PREFIX=${tools_dir}/bamtools-2.5.1 .. && \
+    make && make install && \
+    ln -s ${tools_dir}/bamtools-2.5.1/bin/bamtools ${bin_dir}
+
+
+# Biopython and other useful bioinfo packages
+RUN pip install biopython \
+                pyfaidx \
+                ruffus
+
 # Pipeline
-RUN pip install ruffus 
 #drmaa ??
 
 
