@@ -17,8 +17,7 @@ ENV bin_dir /usr/local/bin
 #ENV username mirna
 
 RUN	apt update && \
-	apt -y install gawk \
-			       cmake
+	apt -y install gawk
 
 # install SV2
 RUN apt -y install python-numpy \
@@ -46,9 +45,9 @@ RUN apt -y install libcurl4-openssl-dev && \
     echo "source /tools/root_v6.16.00/bin/thisroot.sh" >> ~/.bashrc && \
 	wget https://github.com/abyzovlab/CNVnator/releases/download/v0.4/CNVnator_v0.4.zip && \
 	unzip CNVnator_v0.4.zip && cd CNVnator_v0.4/src/ && \
-    ln -s ../../samtools-1.9 samtools && make && \
+    ln -s ../../samtools-1.9 samtools && \
+    /bin/bash -c "export ROOTSYS=/tools/root_v6.16.00 && source /tools/root_v6.16.00/bin/thisroot.sh && make" && \
 	ln -s ${tools_dir}/CNVnator_v0.4/src/cnvnator ${bin_dir}
-	
 
 # install speedseq
 RUN apt -y install python-scipy && \
@@ -68,7 +67,10 @@ RUN cd ${tools_dir} && \
 	unzip master.zip && cd AGE-master && make OMP=no && \
 	ln -s ${tools_dir}/AGE-master/age_align ${bin_dir} && \
 	pip install https://github.com/bioinform/metasv/archive/0.5.2.tar.gz
-	
+
+# SVTyper (latest, independently of SpeedSeq)
+RUN pip install git+https://github.com/hall-lab/svtyper.git
+
 
 
 
