@@ -113,8 +113,10 @@ RUN cd ${tools_dir} && \
     ln -s ${tools_dir}/STAR-2.7.0f/bin/Linux_x86_64/STAR ${bin_dir}
 
 # bamtools
-RUN cd ${tools_dir} && \
+RUN apt -y install cmake && \
+    cd ${tools_dir} && \
     wget https://github.com/pezmaster31/bamtools/archive/v2.5.1.tar.gz && \
+    tar -xzf v2.5.1.tar.gz && \
     mkdir bamtools-2.5.1/build && cd bamtools-2.5.1/build && \
     cmake -DCMAKE_INSTALL_PREFIX=${tools_dir}/bamtools-2.5.1 .. && \
     make && make install && \
@@ -125,6 +127,9 @@ RUN cd ${tools_dir} && \
 RUN pip install biopython \
                 pyfaidx \
                 ruffus
+
+
+RUN apt -y install tabix
 
 # Pipeline
 #drmaa ??
