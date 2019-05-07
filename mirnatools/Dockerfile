@@ -16,12 +16,6 @@ ENV bin_dir /usr/local/bin
 # use later to create mirna user owning stuff, instead of root
 #ENV username mirna
 
-# install trimming script
-RUN apt -y install libtre-dev && \
-	pip install tre && \
-	wget -O ${bin_dir}/trim_UMI.py https://pastebin.com/raw/UuYuzwQD && \
-	chmod a+x ${bin_dir}/trim_UMI.py
-
 ENV TZ=Europe/Warsaw
 
 # install tDRmapper
@@ -46,6 +40,5 @@ RUN cd ${tools_dir} && \
 # UMI-tools
 RUN pip install -U setuptools && \
     pip install umi_tools
-
 
 
