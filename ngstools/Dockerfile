@@ -30,7 +30,7 @@ RUN apt update && \
 			parallel \
             git \
 			vim \
-			build-essential
+			build-essential \
             cmake \
             zlib1g-dev \
             python-pip \
@@ -122,6 +122,13 @@ RUN cd ${tools_dir} && \
     cmake -DCMAKE_INSTALL_PREFIX=${tools_dir}/bamtools-2.5.1 .. && \
     make && make install && \
     ln -s ${tools_dir}/bamtools-2.5.1/bin/bamtools ${bin_dir}
+
+# bedtools
+RUN cd ${tools_dir} && \
+    wget https://github.com/arq5x/bedtools2/releases/download/v2.28.0/bedtools-2.28.0.tar.gz && \
+    tar -xzf bedtools-2.28.0.tar.gz && mv bedtools2 bedtools-2.28.0 && \
+    cd bedtools-2.28.0 && make && \
+    ln -s ${tools_dir}/bedtools-2.28.0/bin/bedtools ${bin_dir}
 
 
 # Biopython and other useful bioinfo packages

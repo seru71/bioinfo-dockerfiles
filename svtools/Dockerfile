@@ -12,17 +12,13 @@ FROM pawels/ngstools
 ENV tools_dir /tools
 ENV bin_dir /usr/local/bin
 
-#
-# use later to create mirna user owning stuff, instead of root
-#ENV username mirna
 
 RUN	apt update && \
 	apt -y install gawk
 
 # install SV2
 RUN apt -y install python-numpy \
-			       cython \
-			       bedtools && \
+			       cython && \
 	pip install sv2
 
 
