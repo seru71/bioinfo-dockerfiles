@@ -24,12 +24,10 @@ RUN apt -y install python-numpy \
 
 # install Manta
 RUN cd ${tools_dir} && \
-	wget https://github.com/Illumina/manta/releases/download/v1.3.2/manta-1.3.2.release_src.tar.bz2 && \
-	tar -xjf manta-1.3.2.release_src.tar.bz2 && \
-	mkdir manta-build && cd manta-build && \
- 	../manta-1.3.2.release_src/configure --jobs=8 --prefix=${tools_dir}/manta-1.3.2 && \
-	make -j8 install && \
-	echo "cd /tools/manta-1.3.2 && ./configManta.py" > ${bin_dir}/manta
+	wget https://github.com/Illumina/manta/releases/download/v1.5.0/manta-1.5.0.centos6_x86_64.tar.bz2 && \
+	tar -xjf manta-1.5.0.centos6_x86_64.tar.bz2 && \
+	echo "cd /tools/manta-1.5.0.centos6_x86_6/bin && ./configManta.py $*" > ${bin_dir}/manta && \
+    chmod u+x ${bin_dir}/manta
 
 
 # install CNVnator
